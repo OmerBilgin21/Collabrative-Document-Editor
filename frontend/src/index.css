@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+	min-height: 100vh;
+}
+
+html {
+  min-height: 100vh;
+	overflow-y: scroll;
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar {
+	width: 0;
+	height: 0;
+}
+      
+.doc-wrapper {
+  overflow-y: scroll;
+  overflow-x: none;
+  scrollbar-width: none;
+  -ms-overflow-style: none
+}
+
+.doc-wrapper::webkit-scrollbar{
+  width: 0;
+  height: 0;
+}
+
+textarea {
+	all: unset;
+}
+
+.cent {
+	@apply flex justify-center items-center text-center align-middle;
+}
