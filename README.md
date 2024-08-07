@@ -13,5 +13,3 @@ Features:
 - Conflict resolution and merging.
 - User presence and activity indicators.
 - WebSocket-based communication for real-time updates.
-
-intentional conflict resolution
