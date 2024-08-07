@@ -7,7 +7,7 @@ import cors from "cors";
 import DocRouter from "./endpoints/doc.js";
 
 // utils
-import registerTextInput from "./registerInput/registerText.js";
+import registerTextInput from "./utils/registerText.js";
 
 export const app: Express = express();
 
