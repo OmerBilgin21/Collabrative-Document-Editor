@@ -14,4 +14,4 @@ Features:
 - User presence and activity indicators.
 - WebSocket-based communication for real-time updates.
 
-intentional conflict creation
+intentional conflict resolution
