@@ -1,8 +1,13 @@
+// external
 import express, { Express } from "express";
 import { WebSocketServer } from "ws";
-import DocRouter from "./endpoints/doc.js";
-import registerTextInput from "./registerInput/registerText.js";
 import cors from "cors";
+
+// types
+import DocRouter from "./endpoints/doc.js";
+
+// utils
+import registerTextInput from "./registerInput/registerText.js";
 
 export const app: Express = express();
 

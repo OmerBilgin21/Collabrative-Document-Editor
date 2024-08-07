@@ -12,15 +12,15 @@ const db = knex({
   },
 });
 
-const docVersionsTable = await db.schema.hasTable("docVersions")
+const docVersionsTable = await db.schema.hasTable("docVersions");
 
 if (!docVersionsTable) {
   await db.schema.withSchema("public").createTable("docVersions", (table) => {
     table.increments();
     table.string("text");
-    table.string('title');
+    table.string("title");
     table.string("name");
-  })
+  });
 }
 
 const docsTable = await db.schema.hasTable("docs");
