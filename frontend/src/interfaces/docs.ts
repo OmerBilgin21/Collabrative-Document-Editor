@@ -1,10 +1,6 @@
-export interface IDocs {
+export interface IDoc {
   id: number;
   name: string;
   title: string;
   text: string;
-}
-
-export interface IDocsContext {
-  data: IDocs[];
 }

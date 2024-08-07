@@ -1,5 +1,5 @@
 import { Dispatch, useState, useEffect } from "preact/hooks";
-import { IDocs } from "../../interfaces/docs";
+import { IDoc } from "../../interfaces/docs";
 import { fetcher } from "../../utils/api";
 
 interface IProps {
@@ -8,7 +8,7 @@ interface IProps {
 }
 
 const Docs = ({ selectedDoc, setSelectedDoc }: IProps) => {
-  const [data, setData] = useState<IDocs[]>([]);
+  const [data, setData] = useState<IDoc[]>([]);
 
   useEffect(() => {
     const getData = async () => {
