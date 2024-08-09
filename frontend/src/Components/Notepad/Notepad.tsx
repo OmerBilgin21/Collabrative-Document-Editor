@@ -13,7 +13,7 @@ const Notepad = ({ ws, selectedDoc }: IProps) => {
   const { data } = useSWR<IDoc>(`/docs/${selectedDoc}`, fetcher, {
     refreshInterval: 100,
   });
-
+  console.log("data: ", data);
   return (
     <div className="h-[80%] min-w-screen bg-black">
       <div className="h-[90%]">
@@ -24,7 +24,8 @@ const Notepad = ({ ws, selectedDoc }: IProps) => {
           // therefore onKeyUp is chosen
           onKeyUp={(e) => {
             const target = e.target as HTMLTextAreaElement;
-            if (ws.readyState) {
+
+            if (ws.readyState && target.value) {
               ws.send(JSON.stringify({ id: selectedDoc, text: target.value }));
             }
           }}

@@ -3,37 +3,41 @@
 @tailwind utilities;
 
 html {
-	min-height: 100vh;
+  min-height: 100vh;
 }
 
 html {
   min-height: 100vh;
-	overflow-y: scroll;
-	scrollbar-width: none;
-	-ms-overflow-style: none;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 html::-webkit-scrollbar {
-	width: 0;
-	height: 0;
+  width: 0;
+  height: 0;
 }
-      
+
 .doc-wrapper {
   overflow-y: scroll;
   overflow-x: none;
   scrollbar-width: none;
-  -ms-overflow-style: none
+  -ms-overflow-style: none;
 }
 
-.doc-wrapper::webkit-scrollbar{
+.doc-wrapper::webkit-scrollbar {
   width: 0;
   height: 0;
 }
 
 textarea {
-	all: unset;
+  all: unset;
 }
 
 .cent {
-	@apply flex justify-center items-center text-center align-middle;
+  @apply flex justify-center items-center text-center align-middle;
+}
+
+.form-section {
+  @apply bg-white text-black rounded-md p-3;
 }
