@@ -1,10 +1,10 @@
 // external
-import express, { Express } from "express";
-import { WebSocketServer } from "ws";
 import cors from "cors";
+import { WebSocketServer } from "ws";
+import express, { Express } from "express";
 
-// types
-import DocRouter from "./endpoints/doc.js";
+// routers
+import routers from "./routers.js";
 
 // utils
 import registerTextInput from "./utils/registerText.js";
@@ -21,7 +21,7 @@ registerTextInput(wss);
 
 app.use(express.json(), express.urlencoded({ extended: true }), cors());
 
-app.use("/docs", DocRouter);
+routers.forEach((eachRouter) => app.use(eachRouter.path, eachRouter.router));
 
 app.listen(8000, () => {
   console.log(`[server]: Server is running at http://localhost:${8000}`);
