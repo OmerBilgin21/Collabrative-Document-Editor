@@ -2,7 +2,7 @@
 import express, { Request, Response } from "express";
 
 // blueprints
-import Document from "../blueprints/doc.js";
+import { CreateDoc, Document } from "../blueprints/doc.js";
 
 // utils
 import db from "../schemas/db.js";
@@ -25,39 +25,38 @@ router.get(
   ): Promise<Response<{ error: string } | Document>> => {
     const { id } = req.params;
 
-    if (!id) return res.status(400).json({ error: "Missing params!" });
+    console.log("id: ", id);
+
+    if (typeof id !== "string")
+      return res.status(400).json({ error: "Missing params!" });
 
     const foundDoc = await db
       .select("*")
       .from<Document>("docs")
-      .where("id", id);
+      .where({ id: parseInt(id) })
+      .first();
 
-    if (foundDoc.length === 0) {
+    if (!foundDoc) {
       return res.status(404).json({ error: "Not found!" });
     }
 
-    return res.json(foundDoc[0]);
+    return res.json(foundDoc);
   },
 );
 
 router.post(
-  "/create",
+  "/",
   async (
     req: Request,
     res: Response,
   ): Promise<Response<{ error: string } | Document>> => {
-    const { title, text, name } = req.body;
+    const { title, name } = <{ title: string; name: string }>req.body;
 
-    if (!title || !text || !name)
+    if (!title || !name)
       return res.status(400).json({ error: "Missing body!" });
 
-    const foundDocs = await db.select("*").from("docs").where("title", title);
-
-    if (foundDocs.length !== 0) {
-      return res.status(400).json({ error: "Document already exists!" });
-    }
-
-    const createdDoc = await db("docs").insert({ title, text, name }, "*");
+    const creatableInstance = new CreateDoc({ title, name });
+    const createdDoc = await creatableInstance.createDoc();
 
     return res.json(createdDoc);
   },
