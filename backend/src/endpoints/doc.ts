@@ -2,7 +2,10 @@
 import express, { Request, Response } from "express";
 
 // blueprints
-import { CreateDoc, Document } from "../blueprints/doc.js";
+import { CreateDoc } from "../blueprints/doc.js";
+
+// types
+import { IDocument } from "../schemas/doc.js";
 
 // utils
 import db from "../schemas/db.js";
@@ -11,8 +14,8 @@ const router = express.Router();
 
 router.get(
   "/",
-  async (_req: Request, res: Response): Promise<Response<Document[]>> => {
-    const foundDocs = await db.select("*").from<Document>("docs");
+  async (_req: Request, res: Response): Promise<Response<IDocument[]>> => {
+    const foundDocs = await db.select("*").from<IDocument>("docs");
     return res.json(foundDocs);
   },
 );
@@ -22,17 +25,14 @@ router.get(
   async (
     req: Request,
     res: Response,
-  ): Promise<Response<{ error: string } | Document>> => {
+  ): Promise<Response<{ error: string } | IDocument>> => {
     const { id } = req.params;
 
-    console.log("id: ", id);
-
-    if (typeof id !== "string")
-      return res.status(400).json({ error: "Missing params!" });
+    if (!id) return res.status(400).json({ error: "Missing params!" });
 
     const foundDoc = await db
       .select("*")
-      .from<Document>("docs")
+      .from<IDocument>("docs")
       .where({ id: parseInt(id) })
       .first();
 
@@ -49,13 +49,13 @@ router.post(
   async (
     req: Request,
     res: Response,
-  ): Promise<Response<{ error: string } | Document>> => {
-    const { title, name } = <{ title: string; name: string }>req.body;
+  ): Promise<Response<{ error: string } | IDocument>> => {
+    const { name } = req.body;
 
-    if (!title || !name)
-      return res.status(400).json({ error: "Missing body!" });
+    if (!name) return res.status(400).json({ error: "Missing body!" });
 
-    const creatableInstance = new CreateDoc({ title, name });
+    const creatableInstance = new CreateDoc({ name });
+
     const createdDoc = await creatableInstance.createDoc();
 
     return res.json(createdDoc);

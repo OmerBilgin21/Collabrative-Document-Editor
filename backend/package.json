@@ -8,7 +8,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "tsx watch src/index.ts"
+    "dev": "DEBUG=express:* tsx watch src/index.ts"
   },
   "dependencies": {
     "cors": "^2.8.5",

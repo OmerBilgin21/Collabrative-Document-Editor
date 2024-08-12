@@ -12,25 +12,24 @@ const db = knex({
   },
 });
 
-const docVersionsTable = await db.schema.hasTable("docVersions");
-
-if (!docVersionsTable) {
-  await db.schema.withSchema("public").createTable("docVersions", (table) => {
-    table.increments();
-    table.string("text");
-    table.string("title");
-    table.string("name");
-  });
-}
-
 const docsTable = await db.schema.hasTable("docs");
 
 if (!docsTable) {
   await db.schema.withSchema("public").createTable("docs", (table) => {
-    table.increments("id");
-    table.string("text");
-    table.string("title");
-    table.string("name");
+    table.increments("id", { primaryKey: true }).unsigned();
+    table.string("name").notNullable();
+  });
+}
+
+const docVersionsTable = await db.schema.hasTable("doc_versions");
+
+if (!docVersionsTable) {
+  await db.schema.withSchema("public").createTable("doc_versions", (table) => {
+    table.increments("id", { primaryKey: true }).unsigned();
+    table.integer("doc_id").unsigned().references("docs.id");
+    table.string("text").notNullable();
+    // for simplicity disable timezones
+    table.datetime("created_at", { useTz: false }).notNullable();
   });
 }
 

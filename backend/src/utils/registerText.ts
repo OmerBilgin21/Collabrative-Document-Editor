@@ -1,26 +1,31 @@
+//external
 import { WebSocketServer } from "ws";
-import { Document } from "../blueprints/doc.js";
+
+// blueprints
+import { DocumentVersionCreate } from "../blueprints/version.js";
+
+// env vars
+import { ERROR_CODE } from "../envs.js";
 
 const registerTextInput = async (wss: WebSocketServer) => {
   wss.on("connection", function connection(ws) {
     ws.on("error", console.error);
 
     ws.on("message", async function message(data) {
-      const receivedData = JSON.parse(data.toString());
+      const receivedData: { doc_id: string; text: string } = JSON.parse(
+        data.toString(),
+      );
 
-      console.log("receivedData: ", receivedData);
-      if (
-        !receivedData?.title ||
-        !receivedData?.text ||
-        !receivedData?.name ||
-        !receivedData?.id
-      ) {
-        const doc = new Document(JSON.parse(data.toString()));
-        const updated = await doc.updateDocText(doc.text);
+      if (!receivedData?.doc_id) ws.send(ERROR_CODE ?? "");
 
-        console.log("updated: ", updated);
-        ws.send(updated.text);
-      }
+      const creatableinstance = new DocumentVersionCreate({
+        doc_id: parseInt(receivedData.doc_id),
+        text: receivedData.text,
+      });
+
+      const createdversion = await creatableinstance.createDocVersion();
+
+      ws.send(createdversion.text);
     });
   });
 };

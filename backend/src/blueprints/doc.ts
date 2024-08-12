@@ -2,58 +2,46 @@
 import db from "../schemas/db.js";
 
 // types
-import type { IDocument, ICreateDoc } from "./interfaces.js";
+import type { IDocument, ICreateDoc } from "../schemas/doc.js";
 
-const docsTable = db("docs");
+const docVersionsTable = db("docs");
 
 export class CreateDoc {
   name: string;
-  title: string;
 
   constructor(doc: ICreateDoc) {
     this.name = doc.name;
-    this.title = doc.title;
   }
 
   async createDoc(): Promise<IDocument> {
-    return await db("docs").insert({
-      title: this.title,
+    const createdDoc: IDocument[] = await db("docs").returning("*").insert({
       name: this.name,
-      text: " ",
     });
+    return createdDoc[0];
   }
 }
 
 export class Document extends CreateDoc {
-  readonly id?: number;
-  text: string;
+  readonly id: number;
 
   constructor(doc: IDocument) {
-    super({ name: doc.name, title: doc.title });
+    super({ name: doc.name });
     this.id = doc.id;
-    this.text = doc.text;
   }
 
   async updateDoc(doc: Document) {
-    const updatedDoc: Document[] = await docsTable
+    const updatedDoc: Document[] = await docVersionsTable
       .returning("*")
       .where({ id: this.id })
       .update(doc);
     return updatedDoc[0];
   }
 
-  async updateDocText(text: string): Promise<IDocument> {
-    return await docsTable
-      .returning("text")
-      .where({ id: this.id })
-      .update({ text });
-  }
-
   async getDoc(): Promise<IDocument> {
-    return await docsTable.select("*").where({ id: this.id }).first();
+    return await docVersionsTable.select("*").where({ id: this.id }).first();
   }
 
   async deleteDoc() {
-    await docsTable.select("*").where({ id: this.id });
+    await docVersionsTable.select("*").where({ id: this.id });
   }
 }
