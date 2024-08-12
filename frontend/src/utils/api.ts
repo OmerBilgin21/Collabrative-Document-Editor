@@ -11,13 +11,22 @@ export const api = axios.create({
   },
 });
 
-export const fetcher = async (url: string) => {
+const useAxios = async (url: string, method: string, data?: any) => {
   try {
-    const res = await api.get(url);
+    const res = await api(
+      data
+        ? {
+            url,
+            method,
+            data,
+          }
+        : { url, method },
+    );
+
     if (res.status === 200) return res.data;
   } catch (error) {
-    if (error) {
-      throw Error("Error while fetching data");
-    }
+    throw Error("Error while fetching data");
   }
 };
+
+export default useAxios;
