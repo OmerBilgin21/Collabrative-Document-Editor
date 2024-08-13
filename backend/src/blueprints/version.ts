@@ -23,19 +23,17 @@ export class DocumentVersionCreate {
 
   async createDocVersion(): Promise<IDocumentVersion> {
     const latest = await getLatestVersionEntry(this.doc_id.toString());
-
     if (latest) {
       const directDiff =
         (new Date().getTime() - new Date(latest.created_at).getTime()) /
         (60 * 1000);
-
-      // make a new version for each hour
-      // if the file is changing rapidly
-      // simply update the latest version only
+      // hourly versioning
       if (directDiff < 60) {
-        const updated: IDocumentVersion[] = await docVersionsTable
-          .update({ text: this.text }, "*")
-          .where({ doc_id: this.doc_id });
+        const updated = await db
+          .update({ text: this.text })
+          .from("doc_versions")
+          .returning("*")
+          .where({ id: latest.id });
         return updated[0];
       }
     }

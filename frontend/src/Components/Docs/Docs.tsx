@@ -21,7 +21,7 @@ const Docs = ({ setSelectedDoc }: IProps) => {
 
   return (
     <div className="doc-page-wrapper flex gap-6 w-full h-[90%] px-6 relative min-w-full ">
-      {data.map((doc: IDoc) => {
+      {data?.map((doc: IDoc) => {
         return (
           <div
             className="w-[5.7rem] h-6 text-center"

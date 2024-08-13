@@ -25,6 +25,7 @@ const registerTextInput = async (wss: WebSocketServer) => {
         text: receivedData.text,
       });
       const createdversion = await creatableinstance.createDocVersion();
+      console.log("sending: ", createdversion.text);
       ws.send(createdversion.text);
     });
   });

@@ -22,7 +22,7 @@ const Notepad = ({ ws, selectedDoc }: IProps) => {
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const { data }: { data: IDocVersion } = useSWR(
-    `/version/${selectedDoc}/latest`,
+    () => (selectedDoc !== -1 ? `/version/${selectedDoc}/latest` : null),
     fetcher,
     {
       refreshInterval: 2000,
@@ -86,9 +86,9 @@ const Notepad = ({ ws, selectedDoc }: IProps) => {
   }
 
   return (
-    <div className="h-full min-w-full ml-0 m:ml-6 lg:ml-10 xl:ml-16">
+    <div className="h-full min-w-full ml-0 m:ml-6 lg:ml-10 xl:ml-16 ">
       <div className="h-full flex w-3/5 shadow-xl">
-        <div className="w-36 h-full">
+        <div className="w-36 max-h-96">
           <VersionList setText={setText} id={selectedDoc} />
         </div>
         <div className="w-full min-w-80 h-full">

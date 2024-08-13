@@ -29,7 +29,7 @@ router.get(
     const latestVersion = await getLatestVersionEntry(id);
 
     if (!latestVersion) {
-      res.status(400).json({ error: "Missing query parameter" });
+      res.status(404).json({ error: "No version found!" });
     }
 
     return res.json(latestVersion);

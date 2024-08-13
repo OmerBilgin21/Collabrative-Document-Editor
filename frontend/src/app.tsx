@@ -10,7 +10,7 @@ export function App() {
   const [selectedDoc, setSelectedDoc] = useState<number>(-1);
 
   return (
-    <div className="h-screen w-screen border-4 border-black flex flex-col gap-32 pt-4 pb-8">
+    <div className="h-screen w-screen flex flex-col gap-12 pt-4 pb-8">
       <Docs setSelectedDoc={setSelectedDoc} />
       <Notepad ws={ws} selectedDoc={selectedDoc} />
     </div>
