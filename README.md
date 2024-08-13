@@ -1,4 +1,4 @@
-# Real-Time Collaborative Document Editor (Google Docs Clone)
+# Real-Time Collaborative Note Editor (Like Google Docs)
 
 The UI will be as plain as possible.
 First version will not include a user auth system.
