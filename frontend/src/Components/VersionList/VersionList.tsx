@@ -1,6 +1,10 @@
-import { Dispatch, useEffect, useState } from "preact/hooks";
+// hooks
+import { useEffect, useState } from "preact/hooks";
 import useAxios from "../../utils/api";
-import { IDocVersion } from "../../interfaces/docs";
+
+// types
+import type { Dispatch } from "preact/hooks";
+import type { IDocVersion } from "../../interfaces/docs";
 
 interface IProps {
   id: number;
@@ -18,26 +22,22 @@ const VersionList = ({ setText, id }: IProps) => {
       }
     };
 
-    // for updating along the way
-    const poleVersions = setInterval(() => {
-      fetcher();
-    }, 20 * 1000);
-
-    // for initial load
+    const poleVersions = setInterval(
+      () => {
+        fetcher();
+      },
+      60 * 60 * 1000,
+    );
     fetcher();
-
     return () => clearInterval(poleVersions);
   }, [id]);
 
-  if (data.length === 0) {
-    return <></>;
-  }
-
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full rounded-l-lg bg-slate-300">
       <ul className="version-list">
         <h1>Versions list:</h1>
         {data.map((version) => {
+          if (!version?.created_at) return;
           const textArr = version.created_at.split("T");
           const readable = textArr[0].concat(
             " at ",

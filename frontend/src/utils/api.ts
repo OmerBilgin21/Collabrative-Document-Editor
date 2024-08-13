@@ -11,6 +11,15 @@ export const api = axios.create({
   },
 });
 
+export const fetcher = async (url: string) => {
+  try {
+    const res = await api.get(url);
+    if (res.status === 200) return res.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 const useAxios = async (url: string, method: string, data?: any) => {
   try {
     const res = await api(

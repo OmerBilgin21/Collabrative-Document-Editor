@@ -21,7 +21,7 @@ export const getLatestVersionEntry = async (
     .select("*")
     .from("doc_versions")
     .where({ doc_id: id })
-    .orderBy("id", "desc")
+    .orderBy("created_at", "desc")
     .first();
 
   return latestVersion;

@@ -1,6 +1,7 @@
 // hooks
+import useSWR from "swr";
+import { fetcher } from "../../utils/api";
 import { useEffect, useState, useRef } from "preact/hooks";
-import useAxios from "../../utils/api";
 
 // utils
 import { mergeString } from "../../utils/resolver";
@@ -18,64 +19,49 @@ interface IProps {
 
 const Notepad = ({ ws, selectedDoc }: IProps) => {
   const [text, setText] = useState<string>("");
-  const [data, setData] = useState<IDocVersion>();
-  const notepadRef = useRef<HTMLDivElement | null>(null);
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
 
-  useEffect(() => {
-    const fetcher = async () => {
-      const versionData = await useAxios(
-        `/version/${selectedDoc}/latest`,
-        "get",
-      );
-      if (versionData) {
-        setData(versionData as unknown as IDocVersion);
-      }
-    };
-    if (data) {
-      setText(data.text);
-    }
-    fetcher();
-  }, [selectedDoc]);
+  const { data }: { data: IDocVersion } = useSWR(
+    `/version/${selectedDoc}/latest`,
+    fetcher,
+    {
+      refreshInterval: 2000,
+    },
+  );
 
   useEffect(() => {
-    if (data) {
+    // I don't sync one character differences between clients
+    // because if we do so, that makes the writing
+    // really cumbersome
+    if (
+      data &&
+      data.text !== text &&
+      Math.sqrt(data.text.length - text.length) !== 1
+    ) {
       setText(data.text);
     }
   }, [data]);
 
-  // keep track of the changes on the db but
-  // keep it at 5 second diffs so the records
-  // for the changes does not explode
-  // we immediately record changes on page unload anyways
   useEffect(() => {
-    const recordTimeout = setTimeout(() => {
-      if (ws.readyState && selectedDoc !== -1) {
-        ws.send(JSON.stringify({ doc_id: selectedDoc, text }));
-      }
-    }, 5000);
-    return () => clearTimeout(recordTimeout);
+    if (ws.readyState && selectedDoc !== -1) {
+      ws.send(JSON.stringify({ doc_id: selectedDoc, text }));
+    }
   }, [text]);
 
-  const handlePageUnload = (e: BeforeUnloadEvent) => {
-    e.preventDefault();
-
-    // we can not use the text value on below
-    // that state is lost on reload or an attempt at closing the browser
-    // but the ref value is preserved
-    if (textAreaRef.current && selectedDoc !== -1)
+  const handlePageUnload = (_: BeforeUnloadEvent) => {
+    if (selectedDoc !== -1) {
+      console.log("text: ", text);
       ws.send(
         JSON.stringify({
           doc_id: selectedDoc,
-          text: textAreaRef.current.value,
+          text,
         }),
       );
+    }
   };
 
   useEffect(() => {
-    if (notepadRef.current) {
-      window.addEventListener("beforeunload", handlePageUnload);
-    }
+    window.addEventListener("beforeunload", handlePageUnload);
     return () => window.removeEventListener("beforeunload", handlePageUnload);
   }, []);
 
@@ -85,38 +71,39 @@ const Notepad = ({ ws, selectedDoc }: IProps) => {
       window.alert(
         "Connection was lost, please reload the page.\nYou might want to secure your text as well!",
       );
+      return;
     }
 
-    if (e.data !== text && text.indexOf(e.data)) {
+    if (e.data !== text) {
       setText(mergeString(e.data, text));
     }
   };
 
+  // The editor doesn't make sense if there's nothing to edit.
+  // -Omer
   if (selectedDoc === -1) {
     return <></>;
   }
 
   return (
-    <div className="h-[80%] min-w-full bg-rose-200" ref={notepadRef}>
-      <div className="h-[90%]">
-        <div className="flex gap-8 h-full w-full bg-rose-200 px-4">
-          <div className="w-[23%] h-full rounded-lg bg-gray-400">
-            <VersionList setText={setText} id={selectedDoc} />
-          </div>
-          <div className="h-full w-[60%]">
-            <textarea
-              ref={textAreaRef}
-              className="bg-cyan-200 text-black h-full w-full px-4 rounded-lg "
-              // on change requires focus change,
-              // onKeyDown is one character behind
-              // therefore onKeyUp is chosen
-              onKeyUp={(e) => {
-                const target = e.target as HTMLTextAreaElement;
-                setText(target.value);
-              }}
-              value={text}
-            />
-          </div>
+    <div className="h-full min-w-full ml-0 m:ml-6 lg:ml-10 xl:ml-16">
+      <div className="h-full flex w-3/5 shadow-xl">
+        <div className="w-36 h-full">
+          <VersionList setText={setText} id={selectedDoc} />
+        </div>
+        <div className="w-full min-w-80 h-full">
+          <textarea
+            ref={textAreaRef}
+            className="bg-slate-100 text-black text-left h-full w-full px-4 rounded-r-lg "
+            // on change requires focus change,
+            // onKeyDown is one character behind
+            // therefore onKeyUp is chosen
+            onKeyUp={(e) => {
+              const target = e.target as HTMLTextAreaElement;
+              setText(target.value);
+            }}
+            value={text}
+          />
         </div>
       </div>
     </div>

@@ -1,41 +1,23 @@
 // components
-import CreateDoc from "./CreateDoc";
+import CreateDoc from "../CreateDoc/CreateDoc";
 
 // hooks
-import { useState, useEffect } from "preact/hooks";
-import useAxios from "../../utils/api";
+import { useState } from "preact/hooks";
+import { fetcher } from "../../utils/api";
 
 // types
 import type { Dispatch } from "preact/hooks";
 import { IDoc } from "../../interfaces/docs";
+import useSWR from "swr";
 
 interface IProps {
   setSelectedDoc: Dispatch<number>;
-  selectedDoc: number;
 }
 
-const Docs = ({ selectedDoc, setSelectedDoc }: IProps) => {
+const Docs = ({ setSelectedDoc }: IProps) => {
   const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
-  const [data, setData] = useState<IDoc[]>([]);
 
-  useEffect(() => {
-    const fetcher = async () => {
-      const resData = await useAxios(`/docs`, "get");
-
-      if (resData) {
-        setData(resData as unknown as IDoc[]);
-      }
-    };
-    fetcher();
-  }, [selectedDoc]);
-
-  if (data.length === 0) {
-    return (
-      <div className="doc-page-wrapper">
-        <h1>Loading...</h1>
-      </div>
-    );
-  }
+  const { data }: { data: IDoc[] } = useSWR("/docs", fetcher);
 
   return (
     <div className="doc-page-wrapper flex gap-6 w-full h-[90%] px-6 relative min-w-full ">

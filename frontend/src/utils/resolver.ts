@@ -9,16 +9,15 @@ const resolveStringArrConflict = (
   return longer.join(" ");
 };
 
-export const mergeString = (stringOne: string, stringTwo: string) => {
-  let mergedString = "";
-  const oneArr = stringOne.split(" ");
-  const twoArr = stringTwo.split(" ");
-  if (stringOne && stringTwo) {
-    if (oneArr.length > twoArr.length) {
-      mergedString = resolveStringArrConflict(oneArr, twoArr);
-    } else {
-      mergedString = resolveStringArrConflict(twoArr, oneArr);
-    }
-  }
+export const mergeString = (firstString: string, secondString: string) => {
+  const firstArray = firstString.split(" ");
+  const secondArray = secondString.split(" ");
+
+  const isFirstL = firstArray.length >= secondArray.length;
+
+  const mergedString = isFirstL
+    ? resolveStringArrConflict(firstArray, secondArray)
+    : resolveStringArrConflict(secondArray, firstArray);
+
   return mergedString;
 };

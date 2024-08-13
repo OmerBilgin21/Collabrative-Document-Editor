@@ -6,6 +6,7 @@ import {
   IDocumentVersion,
   IDocumentVersionCreate,
 } from "../schemas/version.js";
+import { getLatestVersionEntry } from "../utils/version.js";
 
 const docVersionsTable = db("doc_versions");
 
@@ -21,6 +22,24 @@ export class DocumentVersionCreate {
   }
 
   async createDocVersion(): Promise<IDocumentVersion> {
+    const latest = await getLatestVersionEntry(this.doc_id.toString());
+
+    if (latest) {
+      const directDiff =
+        (new Date().getTime() - new Date(latest.created_at).getTime()) /
+        (60 * 1000);
+
+      // make a new version for each hour
+      // if the file is changing rapidly
+      // simply update the latest version only
+      if (directDiff < 60) {
+        const updated: IDocumentVersion[] = await docVersionsTable
+          .update({ text: this.text }, "*")
+          .where({ doc_id: this.doc_id });
+        return updated[0];
+      }
+    }
+
     const createdDocVersion: IDocumentVersion[] = await docVersionsTable
       .returning("*")
       .insert({

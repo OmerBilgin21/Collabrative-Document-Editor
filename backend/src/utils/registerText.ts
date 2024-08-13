@@ -16,15 +16,15 @@ const registerTextInput = async (wss: WebSocketServer) => {
         data.toString(),
       );
 
-      if (!receivedData?.doc_id) ws.send(ERROR_CODE ?? "");
+      if (!receivedData?.doc_id) {
+        ws.send(ERROR_CODE ?? "");
+      }
 
       const creatableinstance = new DocumentVersionCreate({
         doc_id: parseInt(receivedData.doc_id),
         text: receivedData.text,
       });
-
       const createdversion = await creatableinstance.createDocVersion();
-
       ws.send(createdversion.text);
     });
   });
