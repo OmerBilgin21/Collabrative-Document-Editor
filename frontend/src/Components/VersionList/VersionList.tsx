@@ -1,6 +1,6 @@
 // hooks
 import { useEffect, useState } from "preact/hooks";
-import useAxios from "../../utils/api";
+import { useAxios } from "../../utils/api";
 
 // types
 import type { Dispatch } from "preact/hooks";

@@ -4,10 +4,6 @@
 
 html {
   min-height: 100vh;
-}
-
-html {
-  min-height: 100vh;
   overflow-y: scroll;
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -31,7 +27,7 @@ textarea {
 }
 
 .doc-page-wrapper {
-  @apply h-[30%] min-w-full relative flex;
+  @apply h-[30%] min-w-full relative;
 }
 
 .version-list {
@@ -51,10 +47,13 @@ textarea {
 }
 
 .version-list-item {
-  @apply w-full px-1 bg-black bg-opacity-70 text-opacity-70 text-white rounded-lg
-  hover:text-opacity-100 hover:bg-opacity-100 transition duration-500;
+  @apply w-full px-1 bg-black bg-opacity-70 text-opacity-70 text-white rounded-lg hover:text-opacity-100 hover:bg-opacity-100 transition duration-500;
 }
 
 .nice-text {
   @apply text-ellipsis whitespace-nowrap overflow-hidden;
+}
+
+.debug {
+  @apply border-4 border-red-700;
 }

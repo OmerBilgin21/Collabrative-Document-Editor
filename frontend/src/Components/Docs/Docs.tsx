@@ -1,35 +1,30 @@
 // components
 import CreateDoc from "../CreateDoc/CreateDoc";
 
+// context
+import { useDoc } from "../../context/DocContext";
+
 // hooks
 import { useState } from "preact/hooks";
-import { fetcher } from "../../utils/api";
 
 // types
-import type { Dispatch } from "preact/hooks";
 import { IDoc } from "../../interfaces/docs";
-import useSWR from "swr";
 
-interface IProps {
-  setSelectedDoc: Dispatch<number>;
-}
-
-const Docs = ({ setSelectedDoc }: IProps) => {
+const Docs = () => {
   const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
-
-  const { data }: { data: IDoc[] } = useSWR("/docs", fetcher);
+  const { setSelectedDoc, docs } = useDoc();
 
   return (
-    <div className="doc-page-wrapper flex gap-6 w-full h-[90%] px-6 relative min-w-full ">
-      {data?.map((doc: IDoc) => {
+    <div className="flex gap-6 w-full h-32 px-6 pb-6 relative min-w-full">
+      {docs?.map((doc: IDoc) => {
         return (
           <div
-            className="w-[5.7rem] h-6 text-center"
+            className="cent flex-col w-[5.7rem] h-max"
             onClick={() => {
               setSelectedDoc(doc.id);
             }}
           >
-            <p className="max-w-[5.7rem] h-6 nice-text">{doc.name}</p>
+            <p className="nice-text ">{doc.name}</p>
             <img className="rounded-md" src="/doc.svg" alt="document-symbol" />
           </div>
         );

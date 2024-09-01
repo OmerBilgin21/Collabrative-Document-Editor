@@ -11,7 +11,7 @@ export const api = axios.create({
   },
 });
 
-export const fetcher = async (url: string) => {
+export const fetcher = async (url: string): Promise<any> => {
   try {
     const res = await api.get(url);
     if (res.status === 200) return res.data;
@@ -20,7 +20,7 @@ export const fetcher = async (url: string) => {
   }
 };
 
-const useAxios = async (url: string, method: string, data?: any) => {
+export const useAxios = async (url: string, method: string, data?: any) => {
   try {
     const res = await api(
       data
@@ -37,5 +37,3 @@ const useAxios = async (url: string, method: string, data?: any) => {
     throw Error("Error while fetching data");
   }
 };
-
-export default useAxios;

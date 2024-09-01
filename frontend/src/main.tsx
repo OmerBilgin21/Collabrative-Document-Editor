@@ -1,5 +1,11 @@
-import { render } from 'preact'
-import { App } from './app.tsx'
-import './index.css'
+import { render } from "preact";
+import { App } from "./app.tsx";
+import "./index.css";
+import DocContextProvider from "./context/DocContextProvider.tsx";
 
-render(<App />, document.getElementById('app')!)
+render(
+  <DocContextProvider>
+    <App />
+  </DocContextProvider>,
+  document.getElementById("app")!,
+);

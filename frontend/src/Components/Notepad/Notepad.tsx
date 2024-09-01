@@ -1,56 +1,34 @@
 // hooks
-import useSWR from "swr";
-import { fetcher } from "../../utils/api";
 import { useEffect, useState, useRef } from "preact/hooks";
 
-// utils
-import { mergeString } from "../../utils/resolver";
+// context
+import { useDoc } from "../../context/DocContext";
 
 // types
-import { IDocVersion } from "../../interfaces/docs";
 import VersionList from "../VersionList/VersionList";
 
-const ERROR_CODE = import.meta.env.VITE_ERROR_CODE;
+// utils
+import { validate } from "uuid";
 
 interface IProps {
   ws: WebSocket;
-  selectedDoc: number;
 }
 
-const Notepad = ({ ws, selectedDoc }: IProps) => {
+const Notepad = ({ ws }: IProps) => {
   const [text, setText] = useState<string>("");
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
 
-  const { data }: { data: IDocVersion } = useSWR(
-    () => (selectedDoc !== -1 ? `/version/${selectedDoc}/latest` : null),
-    fetcher,
-    {
-      refreshInterval: 2000,
-    },
-  );
+  const { versionData: data, selectedDoc } = useDoc();
 
+  // we need it for initial load
   useEffect(() => {
-    // I don't sync one character differences between clients
-    // because if we do so, that makes the writing
-    // really cumbersome
-    if (
-      data &&
-      data.text !== text &&
-      Math.sqrt(data.text.length - text.length) !== 1
-    ) {
+    if (data) {
       setText(data.text);
     }
   }, [data]);
 
-  useEffect(() => {
-    if (ws.readyState && selectedDoc !== -1) {
-      ws.send(JSON.stringify({ doc_id: selectedDoc, text }));
-    }
-  }, [text]);
-
   const handlePageUnload = (_: BeforeUnloadEvent) => {
     if (selectedDoc !== -1) {
-      console.log("text: ", text);
       ws.send(
         JSON.stringify({
           doc_id: selectedDoc,
@@ -66,16 +44,16 @@ const Notepad = ({ ws, selectedDoc }: IProps) => {
   }, []);
 
   ws.onmessage = (e) => {
-    // backend is sending a preset uuid in case of error
-    if (e.data === ERROR_CODE) {
+    // backend is sending a uuid in case of error
+    if (validate(e.data)) {
       window.alert(
         "Connection was lost, please reload the page.\nYou might want to secure your text as well!",
       );
       return;
     }
 
-    if (e.data !== text) {
-      setText(mergeString(e.data, text));
+    if (typeof e.data === "string" && e.data !== text) {
+      setText(e.data);
     }
   };
 
@@ -88,7 +66,7 @@ const Notepad = ({ ws, selectedDoc }: IProps) => {
   return (
     <div className="h-full min-w-full ml-0 m:ml-6 lg:ml-10 xl:ml-16 ">
       <div className="h-full flex w-3/5 shadow-xl">
-        <div className="w-36 max-h-96">
+        <div className="w-36 max-h-full">
           <VersionList setText={setText} id={selectedDoc} />
         </div>
         <div className="w-full min-w-80 h-full">
@@ -100,7 +78,12 @@ const Notepad = ({ ws, selectedDoc }: IProps) => {
             // therefore onKeyUp is chosen
             onKeyUp={(e) => {
               const target = e.target as HTMLTextAreaElement;
-              setText(target.value);
+              if (ws.readyState && selectedDoc !== -1) {
+                ws.send(
+                  JSON.stringify({ doc_id: selectedDoc, text: target.value }),
+                );
+              }
+              console.log("target: ", target.value);
             }}
             value={text}
           />

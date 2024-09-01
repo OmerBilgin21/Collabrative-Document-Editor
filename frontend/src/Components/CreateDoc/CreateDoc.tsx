@@ -1,5 +1,5 @@
 import { Dispatch, useEffect, useRef, useState } from "preact/hooks";
-import useAxios from "../../utils/api";
+import { useAxios } from "../../utils/api";
 
 interface IProps {
   setIsFormOpen: Dispatch<boolean>;
