@@ -5,10 +5,12 @@ import express, { Request, Response } from "express";
 import { CreateDoc } from "../blueprints/doc.js";
 
 // types
-import { IDocument } from "../schemas/doc.js";
+import type { IDocument } from "../schemas/doc.js";
+import type { IError } from "../utils/errors.js";
 
 // utils
 import db from "../schemas/db.js";
+import { NotFoundError, MissingParamsError } from "../utils/errors.js";
 
 const router = express.Router();
 
@@ -25,10 +27,10 @@ router.get(
   async (
     req: Request,
     res: Response,
-  ): Promise<Response<{ error: string } | IDocument>> => {
+  ): Promise<Response<IError | IDocument>> => {
     const { id } = req.params;
 
-    if (!id) return res.status(400).json({ error: "Missing params!" });
+    if (!id) return res.status(400).json(MissingParamsError);
 
     const foundDoc = await db
       .select("*")
@@ -37,7 +39,7 @@ router.get(
       .first();
 
     if (!foundDoc) {
-      return res.status(404).json({ error: "Not found!" });
+      return res.status(404).json(NotFoundError);
     }
 
     return res.json(foundDoc);
@@ -49,12 +51,12 @@ router.post(
   async (
     req: Request,
     res: Response,
-  ): Promise<Response<{ error: string } | IDocument>> => {
-    const { name } = req.body;
+  ): Promise<Response<IError | IDocument>> => {
+    const { name, ownerId } = req.body;
 
-    if (!name) return res.status(400).json({ error: "Missing body!" });
+    if (!name || !ownerId) return res.status(400).json(MissingParamsError);
 
-    const creatableInstance = new CreateDoc({ name });
+    const creatableInstance = new CreateDoc({ name, owner_id: ownerId });
 
     const createdDoc = await creatableInstance.createDoc();
 

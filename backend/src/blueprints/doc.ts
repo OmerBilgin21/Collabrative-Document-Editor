@@ -8,9 +8,11 @@ const docVersionsTable = db("docs");
 
 export class CreateDoc {
   name: string;
+  readonly owner_id: number;
 
   constructor(doc: ICreateDoc) {
     this.name = doc.name;
+    this.owner_id = doc.owner_id;
   }
 
   async createDoc(): Promise<IDocument> {
@@ -25,7 +27,10 @@ export class Document extends CreateDoc {
   readonly id: number;
 
   constructor(doc: IDocument) {
-    super({ name: doc.name });
+    super({
+      name: doc.name,
+      owner_id: doc.owner_id,
+    });
     this.id = doc.id;
   }
 
