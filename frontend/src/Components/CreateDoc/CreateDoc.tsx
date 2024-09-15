@@ -1,4 +1,4 @@
-import { Dispatch, useEffect, useRef, useState } from "preact/hooks";
+import { Dispatch, useEffect, useRef } from "preact/hooks";
 import { useAxios } from "../../utils/api";
 
 interface IProps {
@@ -6,7 +6,6 @@ interface IProps {
 }
 
 const CreateDoc = ({ setIsFormOpen }: IProps) => {
-  const [formData, setFormData] = useState<string>("");
   const formRef = useRef<HTMLFormElement | null>(null);
 
   function handleClickOutside(event: MouseEvent) {
@@ -21,8 +20,19 @@ const CreateDoc = ({ setIsFormOpen }: IProps) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleSubmit = async () => {
-    await useAxios("/docs", "post", { name: formData });
+  const handleSubmit = async (e: Event) => {
+    e.preventDefault();
+    const target = e.target as HTMLFormElement;
+    const isValid = target.checkValidity();
+    if (!isValid) {
+      window.alert("Name invalid");
+    }
+
+    const formData = {
+      name: (target.elements.namedItem("doc-name") as HTMLInputElement).value,
+    };
+
+    await useAxios("/docs", "post", { name: formData.name });
   };
 
   return (
@@ -36,11 +46,9 @@ const CreateDoc = ({ setIsFormOpen }: IProps) => {
         <input
           className="border-[1px] border-dotted border-black"
           id="name-input"
+          name="doc-name"
           type="text"
-          onChange={(e) => {
-            const target = e.target as HTMLInputElement;
-            setFormData(target.value);
-          }}
+          required
         />
       </div>
 
