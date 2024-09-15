@@ -11,6 +11,8 @@ export const api = axios.create({
   },
 });
 
+api.defaults.withCredentials = true;
+
 export const fetcher = async (url: string): Promise<any> => {
   try {
     const res = await api.get(url);
@@ -34,6 +36,6 @@ export const useAxios = async (url: string, method: string, data?: any) => {
 
     if (res.status === 200) return res.data;
   } catch (error) {
-    throw Error("Error while fetching data");
+    throw Error("Error on request");
   }
 };

@@ -1,14 +1,21 @@
+// external
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 // components
-import Docs from "./Components/Docs/Docs";
-import Notepad from "./Components/Notepad/Notepad";
+import Home from "./Components/Home/Home";
+import Login from "./Components/Login/Login";
+import SignUp from "./Components/Login/SignUp";
 
 export function App() {
-  const ws = new WebSocket("ws://localhost:8080", []);
-
   return (
     <div className="h-screen w-screen flex flex-col gap-12 pt-4 pb-8">
-      <Docs />
-      <Notepad ws={ws} />
+      <BrowserRouter>
+        <Routes>
+          <Route index element={<Home />} />
+          <Route path="signup" element={<SignUp />} />
+          <Route path="signin" element={<Login />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
