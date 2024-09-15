@@ -13,7 +13,7 @@ Below is a draft that I came up with. It includes my goals with the project.
 - [ ] Conflict resolution and merging.
 - [ ] User presence and activity indicators.
 - [x] WebSocket-based communication for real-time updates.
-- [ ] Document ownership
+- [x] Document ownership
 - [ ] Encryption for the docs
 - [ ] Better storage for docs (file based probably)
 - [ ] Better UI
