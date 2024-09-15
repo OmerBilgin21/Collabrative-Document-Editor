@@ -9,15 +9,29 @@ import type { IDocument } from "../schemas/doc.js";
 import type { IError } from "../utils/errors.js";
 
 // utils
-import db from "../schemas/db.js";
-import { NotFoundError, MissingParamsError } from "../utils/errors.js";
+import { db } from "../schemas/db.js";
+import {
+  NotFoundError,
+  MissingParamsError,
+  UnAuthorizedError,
+} from "../utils/errors.js";
+import { verifyToken } from "../utils/security.js";
 
 const router = express.Router();
 
 router.get(
   "/",
-  async (_req: Request, res: Response): Promise<Response<IDocument[]>> => {
-    const foundDocs = await db.select("*").from<IDocument>("docs");
+  async (req: Request, res: Response): Promise<Response<IDocument[]>> => {
+    const token = req.cookies?.accessToken;
+    if (!token) return res.status(401).json(UnAuthorizedError);
+
+    const decodedToken = await verifyToken(token);
+    if (!decodedToken) return res.status(401).json(UnAuthorizedError);
+
+    const foundDocs = await db
+      .select("*")
+      .from<IDocument>("docs")
+      .where({ owner_id: decodedToken.id });
     return res.json(foundDocs);
   },
 );
@@ -28,9 +42,13 @@ router.get(
     req: Request,
     res: Response,
   ): Promise<Response<IError | IDocument>> => {
+    const token = req.cookies?.accessToken;
     const { id } = req.params;
 
+    if (!token) return res.status(401).json(UnAuthorizedError);
     if (!id) return res.status(400).json(MissingParamsError);
+    const decodedToken = await verifyToken(token);
+    if (!decodedToken) return res.status(401).json(UnAuthorizedError);
 
     const foundDoc = await db
       .select("*")
@@ -40,6 +58,10 @@ router.get(
 
     if (!foundDoc) {
       return res.status(404).json(NotFoundError);
+    }
+
+    if (foundDoc.owner_id !== decodedToken.id) {
+      return res.status(401).json(UnAuthorizedError);
     }
 
     return res.json(foundDoc);
@@ -52,11 +74,17 @@ router.post(
     req: Request,
     res: Response,
   ): Promise<Response<IError | IDocument>> => {
-    const { name, ownerId } = req.body;
+    const { name } = req.body;
 
-    if (!name || !ownerId) return res.status(400).json(MissingParamsError);
+    const token = req.cookies?.accessToken;
+    if (!token) return res.status(401).json(UnAuthorizedError);
+    const decodedToken = await verifyToken(token);
+    if (!decodedToken) return res.status(401).json(UnAuthorizedError);
 
-    const creatableInstance = new CreateDoc({ name, owner_id: ownerId });
+    const creatableInstance = new CreateDoc({
+      name,
+      owner_id: decodedToken.id,
+    });
 
     const createdDoc = await creatableInstance.createDoc();
 
