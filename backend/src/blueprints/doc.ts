@@ -1,5 +1,5 @@
 // utils
-import db from "../schemas/db.js";
+import { db } from "../schemas/db.js";
 
 // types
 import type { IDocument, ICreateDoc } from "../schemas/doc.js";
@@ -18,6 +18,7 @@ export class CreateDoc {
   async createDoc(): Promise<IDocument> {
     const createdDoc: IDocument[] = await db("docs").returning("*").insert({
       name: this.name,
+      owner_id: this.owner_id,
     });
     return createdDoc[0];
   }
