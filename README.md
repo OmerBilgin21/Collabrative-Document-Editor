@@ -10,7 +10,7 @@ Below is a draft that I came up with. It includes my goals with the project.
 
 - [x] Real-time collaborative editing.
 - [x] Document versioning and history.
-- [ ] Conflict resolution and merging.
+- [ ] Conflict resolution and merging. (Is this even necessary after real time switch from polling?)
 - [ ] User presence and activity indicators.
 - [x] WebSocket-based communication for real-time updates.
 - [x] Document ownership
