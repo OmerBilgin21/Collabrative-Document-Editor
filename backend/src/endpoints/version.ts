@@ -5,7 +5,7 @@ import express, { Request, Response } from "express";
 import { DocumentVersionCreate } from "../blueprints/version.js";
 
 // utils
-import db from "../schemas/db.js";
+import { db } from "../schemas/db.js";
 
 // types
 import { IDocument } from "../schemas/doc.js";

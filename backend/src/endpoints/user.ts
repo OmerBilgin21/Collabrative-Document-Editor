@@ -19,7 +19,7 @@ router.get(
     const { email } = req.params;
     if (!email) return res.status(400).json(MissingParamsError);
 
-    const foundUser = User.getUser(email);
+    const foundUser = User.getUser({ email });
 
     if (!foundUser) return res.status(404).json(NotFoundError);
 

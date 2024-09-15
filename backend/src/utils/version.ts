@@ -1,5 +1,5 @@
 // utils
-import db from "../schemas/db.js";
+import { db } from "../schemas/db.js";
 
 // types
 import { IDocumentVersion } from "../schemas/version.js";
