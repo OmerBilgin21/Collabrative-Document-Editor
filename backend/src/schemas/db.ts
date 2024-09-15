@@ -12,9 +12,9 @@ const db = knex({
   },
 });
 
-const docsTable = await db.schema.hasTable("docs");
+const hasDocsTable = await db.schema.hasTable("docs");
 
-if (!docsTable) {
+if (!hasDocsTable) {
   await db.schema.withSchema("public").createTable("docs", (table) => {
     table.increments("id", { primaryKey: true }).unsigned();
     table.integer("owner_id").unsigned().references("users.id").notNullable();
@@ -22,9 +22,9 @@ if (!docsTable) {
   });
 }
 
-const docVersionsTable = await db.schema.hasTable("doc_versions");
+const hasDocVersionsTable = await db.schema.hasTable("doc_versions");
 
-if (!docVersionsTable) {
+if (!hasDocVersionsTable) {
   await db.schema.withSchema("public").createTable("doc_versions", (table) => {
     table.increments("id", { primaryKey: true }).unsigned();
     table.integer("doc_id").unsigned().references("docs.id").notNullable();
@@ -34,9 +34,9 @@ if (!docVersionsTable) {
   });
 }
 
-const usersTable = await db.schema.hasTable("users");
+const hasUsersTable = await db.schema.hasTable("users");
 
-if (!usersTable) {
+if (!hasUsersTable) {
   await db.schema.withSchema("public").createTable("users", (table) => {
     table.increments("id", { primaryKey: true }).unsigned();
     table.string("email").notNullable();
@@ -46,9 +46,9 @@ if (!usersTable) {
   });
 }
 
-const documentSharesTable = await db.schema.hasTable("document_shares");
+const hasDocumentSharesTable = await db.schema.hasTable("document_shares");
 
-if (!documentSharesTable) {
+if (!hasDocumentSharesTable) {
   await db.schema
     .withSchema("public")
     .createTable("document_shares", (table) => {
@@ -66,4 +66,9 @@ if (!documentSharesTable) {
     });
 }
 
-export default db;
+const usersTable = db("users");
+const docsTable = db("docs");
+const versTable = db("doc_versions");
+const sharesTable = db("document_shares");
+
+export { db, usersTable, docsTable, versTable, sharesTable };

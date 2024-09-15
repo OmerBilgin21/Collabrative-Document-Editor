@@ -1,37 +1,37 @@
 // utils
-import db from "../schemas/db.js";
-import bcrypt from "bcrypt";
+import { usersTable } from "../schemas/db.js";
+import { hashPassword } from "../utils/security.js";
 
 // types
-import type { IUserCreate, IUser } from "../schemas/user.js";
+import type { IUser } from "../schemas/user.js";
 
-export class CreateUser {
+export class User {
+  readonly id?: number;
   name: string;
   surname: string;
   email: string;
   password: string;
 
-  constructor(user: IUserCreate) {
+  constructor(user: IUser) {
     this.name = user.name;
     this.surname = user.surname;
     this.email = user.email;
     this.password = user.password;
+    this.id = user?.id;
   }
 
   async create(): Promise<IUser | undefined> {
-    const existingUser: IUser = await db("users")
+    const existingUser: IUser[] = await usersTable
       .select("*")
-      .where({ email: this.email })
-      .first();
+      .where({ email: this.email });
 
-    if (existingUser) {
+    if (existingUser.length) {
       return;
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(this.password, salt);
+    const hashedPassword = await hashPassword(this.password);
 
-    const createdUser: IUser[] = await db("users").returning("*").insert({
+    const createdUser: IUser[] = await usersTable.returning("*").insert({
       name: this.name,
       surname: this.surname,
       email: this.email,
@@ -40,36 +40,28 @@ export class CreateUser {
 
     return createdUser[0];
   }
-}
 
-export class User extends CreateUser {
-  readonly id: number;
+  public static async getUser(filter: {
+    email?: string;
+    id?: string | number;
+  }): Promise<IUser | void> {
+    if (!filter?.email && !filter?.id) {
+      return;
+    }
 
-  constructor(user: IUser) {
-    super({
-      name: user.name,
-      surname: user.surname,
-      email: user.email,
-      password: user.password,
-    });
-    this.id = user.id;
-  }
+    const dbFilter = filter?.email
+      ? { email: filter?.email }
+      : { id: filter?.id };
 
-  public static async getUser(email: string): Promise<IUser | undefined> {
-    const found: IUser = await db("users")
-      .select("*")
-      .where({ id: email })
-      .first();
-    if (!found) return;
-    return found;
+    return await usersTable.select("*").where(dbFilter).first();
   }
 
   async getThisUser(): Promise<IUser> {
-    return await db("users").select("*").where({ id: this.id }).first();
+    return await usersTable.select("*").where({ id: this.id }).first();
   }
 
   async updateUser(user: IUser): Promise<IUser> {
-    const updatedUser: User[] = await db("users")
+    const updatedUser: User[] = await usersTable
       .returning("*")
       .where({ id: this.id })
       .update(user);
