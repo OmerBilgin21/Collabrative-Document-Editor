@@ -57,3 +57,7 @@ textarea {
 .debug {
   @apply border-4 border-red-700;
 }
+
+.form-input {
+  @apply border-[1px] border-black p-1 rounded-lg border-dotted bg-slate-200 nice-text;
+}
