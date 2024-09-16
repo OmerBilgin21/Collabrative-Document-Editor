@@ -28,7 +28,7 @@ if (!hasDocVersionsTable) {
   await db.schema.withSchema("public").createTable("doc_versions", (table) => {
     table.increments("id", { primaryKey: true }).unsigned();
     table.integer("doc_id").unsigned().references("docs.id").notNullable();
-    table.string("text").notNullable();
+    table.text("text").notNullable();
     // for simplicity disable timezones
     table.datetime("created_at", { useTz: false }).notNullable();
   });

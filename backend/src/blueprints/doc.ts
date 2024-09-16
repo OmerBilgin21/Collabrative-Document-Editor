@@ -1,8 +1,9 @@
 // utils
-import { db } from "../schemas/db.js";
+import { db, docsTable } from "../schemas/db.js";
 
 // types
 import type { IDocument, ICreateDoc } from "../schemas/doc.js";
+import { IUser } from "../schemas/user.js";
 
 const docVersionsTable = db("docs");
 
@@ -49,5 +50,9 @@ export class Document extends CreateDoc {
 
   async deleteDoc() {
     await docVersionsTable.select("*").where({ id: this.id });
+  }
+
+  public static async getDocumentById(id: number): Promise<IUser | void> {
+    return await db.select("*").from<IUser>("docs").where({ id }).first();
   }
 }

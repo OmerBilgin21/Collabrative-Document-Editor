@@ -4,8 +4,12 @@ interface IUserBase {
   email: string;
 }
 
+export interface IUserCreate extends IUserBase {
+  password: string;
+}
+
 export interface IUser extends IUserBase {
-  id?: number;
+  id: number;
   password: string;
 }
 

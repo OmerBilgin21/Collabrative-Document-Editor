@@ -2,20 +2,22 @@
 import express, { Request, Response } from "express";
 
 // blueprints
-import { CreateDoc } from "../blueprints/doc.js";
+import { CreateDoc, Document } from "../blueprints/doc.js";
 
 // types
 import type { IDocument } from "../schemas/doc.js";
 import type { IError } from "../utils/errors.js";
 
 // utils
-import { db } from "../schemas/db.js";
+import { db, docsTable } from "../schemas/db.js";
 import {
   NotFoundError,
   MissingParamsError,
   UnAuthorizedError,
 } from "../utils/errors.js";
 import { verifyToken } from "../utils/security.js";
+import { IDocumentShares } from "../schemas/documentShares.js";
+import { DocumentShare } from "../blueprints/documentShares.js";
 
 const router = express.Router();
 
@@ -32,6 +34,22 @@ router.get(
       .select("*")
       .from<IDocument>("docs")
       .where({ owner_id: decodedToken.id });
+
+    const sharesOfUser: IDocumentShares[] | void =
+      await DocumentShare.getSharesOfUser(decodedToken.id);
+
+    if (sharesOfUser) {
+      const sharedDocs: IDocument[] = await db
+        .select("*")
+        .from<IDocument>("docs")
+        .whereRaw(
+          "id = ?",
+          sharesOfUser.map((share) => share.docId),
+        );
+
+      if (sharedDocs) foundDocs.push(...sharedDocs);
+    }
+
     return res.json(foundDocs);
   },
 );

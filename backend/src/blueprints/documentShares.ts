@@ -27,7 +27,7 @@ export class DocumentShare {
         doc_id: this.docId,
         user_id: this.userId,
       });
-    return this.serialize(createdShare[0]);
+    return DocumentShare.serialize(createdShare[0]);
   }
 
   async update(share: IDBDocumentShares): Promise<IDocumentShares | void> {
@@ -38,7 +38,7 @@ export class DocumentShare {
       .where({ id: this.id })
       .update(share);
 
-    return this.serialize(updatedShare[0]);
+    return DocumentShare.serialize(updatedShare[0]);
   }
 
   async get(): Promise<IDocumentShares | void> {
@@ -48,7 +48,7 @@ export class DocumentShare {
       .select("*")
       .where({ id: this.id })
       .first();
-    return this.serialize(found);
+    return DocumentShare.serialize(found);
   }
 
   async delete(): Promise<void> {
@@ -60,10 +60,22 @@ export class DocumentShare {
   public static async getSharesOfUser(
     id: number,
   ): Promise<IDocumentShares[] | void> {
-    return sharesTable.select("*").where({ user_id: id });
+    const sharesOfUser: IDBDocumentShares[] = await sharesTable
+      .select("*")
+      .where({ user_id: id });
+    return sharesOfUser?.map((share) => this.serialize(share));
   }
 
-  serialize(record: IDBDocumentShares): IDocumentShares {
+  public static async getSharesOfDocument(
+    id: number,
+  ): Promise<void | IDocumentShares[]> {
+    const sharesOfDoc: IDBDocumentShares[] = await sharesTable
+      .select("*")
+      .where({ id });
+    return sharesOfDoc.map((share) => this.serialize(share));
+  }
+
+  static serialize(record: IDBDocumentShares): IDocumentShares {
     return {
       docId: record.doc_id,
       userId: record.user_id,

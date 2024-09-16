@@ -84,14 +84,12 @@ router.post(
     if (!email || !name || !surname || !password)
       return res.status(400).json(MissingParamsError);
 
-    const userIns = new User({
+    const createdUser = await User.create({
       name,
       surname,
       email,
       password,
     });
-
-    const createdUser = await userIns.create();
 
     if (!createdUser) return res.status(409).json(UserConflictError);
 

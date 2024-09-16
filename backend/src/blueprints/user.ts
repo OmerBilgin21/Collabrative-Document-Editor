@@ -3,10 +3,10 @@ import { usersTable } from "../schemas/db.js";
 import { hashPassword } from "../utils/security.js";
 
 // types
-import type { IUser } from "../schemas/user.js";
+import type { IUser, IUserCreate } from "../schemas/user.js";
 
 export class User {
-  readonly id?: number;
+  readonly id: number;
   name: string;
   surname: string;
   email: string;
@@ -17,24 +17,24 @@ export class User {
     this.surname = user.surname;
     this.email = user.email;
     this.password = user.password;
-    this.id = user?.id;
+    this.id = user.id;
   }
 
-  async create(): Promise<IUser | undefined> {
+  public static async create(user: IUserCreate): Promise<IUser | undefined> {
     const existingUser: IUser[] = await usersTable
       .select("*")
-      .where({ email: this.email });
+      .where({ email: user.email });
 
-    if (existingUser.length) {
+    if (existingUser?.length) {
       return;
     }
 
-    const hashedPassword = await hashPassword(this.password);
+    const hashedPassword = await hashPassword(user.password);
 
     const createdUser: IUser[] = await usersTable.returning("*").insert({
-      name: this.name,
-      surname: this.surname,
-      email: this.email,
+      name: user.name,
+      surname: user.surname,
+      email: user.email,
       password: hashedPassword,
     });
 
