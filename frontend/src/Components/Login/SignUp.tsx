@@ -30,14 +30,11 @@ const SignUp = () => {
   return (
     <div className="h-full w-full cent">
       <form
-        // onSubmit={(e) => {
-        //   e.preventDefault();
-        //   const target = e.target as HTMLFormElement;
-        //   console.log("asd", target.value);
-        // }}
         onSubmit={handleSubmit}
-        className="w-full h-full flex flex-col gap-4 cent"
+        className="w-96 h-96 flex flex-col gap-4 cent rounded-lg"
       >
+        <h1 className="text-3xl">Sign Up</h1>
+        <div className="divider" />
         <input
           className="form-input"
           type="text"
@@ -66,7 +63,9 @@ const SignUp = () => {
           placeholder="password..."
           name="password"
         />
-        <button type="submit">Submit</button>
+        <button className="bg-slate-200 rounded-xl p-2 w-3/5" type="submit">
+          Submit
+        </button>
       </form>
     </div>
   );

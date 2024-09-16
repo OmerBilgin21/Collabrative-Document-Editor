@@ -28,7 +28,7 @@ const AuthContextProvider = ({
         setUser(res);
         console.log("it is set bro we know that");
       } catch (authError) {
-        window.alert("Email or password incorrect!");
+        console.error("not authenticated");
       }
     };
     isAuthenticated();

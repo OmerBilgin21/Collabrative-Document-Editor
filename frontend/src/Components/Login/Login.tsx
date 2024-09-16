@@ -29,8 +29,10 @@ const Login = () => {
     <div className="h-full w-full cent">
       <form
         onSubmit={handleSubmit}
-        className="w-full h-full flex flex-col gap-4 cent"
+        className="w-96 h-96 flex flex-col gap-4 cent rounded-lg"
       >
+        <h1 className="text-3xl">Sign In</h1>
+        <div className="divider" />
         <input
           className="form-input"
           type="email"
@@ -45,8 +47,12 @@ const Login = () => {
           placeholder="password..."
           name="password"
         />
-        <button type="submit">Submit</button>
-        <Link to="/signup">Don't have an account? Signup</Link>
+        <button className="bg-slate-200 rounded-xl p-2 w-3/5" type="submit">
+          Submit
+        </button>
+        <Link className="bg-slate-200 rounded-xl p-2 w-3/5" to="/signup">
+          Don't have an account? <span className="text-blue-500">Signup</span>
+        </Link>
       </form>
     </div>
   );

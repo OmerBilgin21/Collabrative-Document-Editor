@@ -1,12 +1,11 @@
 // hooks
-import useSWR from "swr";
-import { useState } from "preact/compat";
+import { useState, useEffect } from "preact/compat";
 
 // context
 import { DocContext } from "./DocContext";
 
 // utils
-import { fetcher } from "../utils/api";
+import { useAxios } from "../utils/api";
 
 // types
 import type { JSX } from "preact/compat";
@@ -19,18 +18,25 @@ const DocContextProvider = ({
   children: ReactNode;
 }): JSX.Element => {
   const [selectedDoc, setSelectedDoc] = useState<number>(-1);
+  const [docs, setDocs] = useState<IDoc[]>([]);
   const [versionData, setVersionData] = useState<IDocVersion | undefined>(
     undefined,
   );
 
-  const { data: docs }: { data: IDoc[] } = useSWR("/docs", fetcher);
+  useEffect(() => {
+    const getDocs = async () => {
+      const docs: IDoc[] = await useAxios("/docs", "get");
+      setDocs(docs);
+    };
+    const getVersions = async () => {
+      if (selectedDoc === -1) return;
+      const vers = await useAxios(`/version/${selectedDoc}/latest`, "get");
+      setVersionData(vers);
+    };
 
-  const { data }: { data: IDocVersion } = useSWR(
-    () => (selectedDoc !== -1 ? `/version/${selectedDoc}/latest` : null),
-    fetcher,
-  );
-
-  setVersionData(data);
+    getDocs();
+    getVersions();
+  }, [selectedDoc]);
 
   return (
     <DocContext.Provider

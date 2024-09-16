@@ -8,25 +8,22 @@ import { useDoc } from "../../context/DocContext";
 import { useState } from "preact/hooks";
 
 // types
-import { IDoc } from "../../interfaces/docs";
+import type { IDoc } from "../../interfaces/docs";
+import DocumentIcon from "../DocumentIcon/DocumentIcon";
 
 const Docs = () => {
   const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
-  const { setSelectedDoc, docs } = useDoc();
+  const { docs } = useDoc();
 
   return (
     <div className="flex gap-6 w-full h-32 px-6 pb-6 relative min-w-full">
       {docs?.map((doc: IDoc) => {
         return (
-          <div
-            className="cent flex-col w-[5.7rem] h-max"
-            onClick={() => {
-              setSelectedDoc(doc.id);
-            }}
-          >
-            <p className="nice-text ">{doc.name}</p>
-            <img className="rounded-md" src="/doc.svg" alt="document-symbol" />
-          </div>
+          <DocumentIcon
+            docId={doc.id}
+            name={doc.name}
+            sharedUserMails={["qwe@qwe"]}
+          />
         );
       })}
 

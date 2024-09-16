@@ -36,6 +36,6 @@ export const useAxios = async (url: string, method: string, data?: any) => {
 
     if (res.status === 200) return res.data;
   } catch (error) {
-    throw Error("Error on request");
+    throw new Error(JSON.stringify(error));
   }
 };
