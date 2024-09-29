@@ -40,7 +40,6 @@ router.get(
 
     try {
       const decodedToken = await verifyToken(token);
-      console.log("decodedToken: ", decodedToken);
 
       return res.status(200).json({
         email: decodedToken,
@@ -58,8 +57,6 @@ router.get(
   "/:email/:password",
   async (req: Request, res: Response): Promise<Response<IError | void>> => {
     const { email, password } = req.params;
-    console.log("email: ", email);
-    console.log("passwords: ", password);
     if (!email || !password) return res.status(400).json(MissingParamsError);
 
     const validatedUser = await authenticate(email, password);
