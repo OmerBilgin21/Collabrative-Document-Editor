@@ -10,6 +10,10 @@ const db = knex({
     database: DB_NAME,
     ssl: false,
   },
+  pool: {
+    min: 1,
+    max: 10,
+  },
 });
 
 const hasDocsTable = await db.schema.hasTable("docs");
