@@ -3,8 +3,12 @@ import { WebSocketServer } from "ws";
 
 // blueprints
 import { DocumentVersionCreate } from "../blueprints/version.js";
+import { Knex } from "knex";
 
-const registerTextInput = async (wss: WebSocketServer) => {
+const registerTextInput = async (
+  wss: WebSocketServer,
+  sharedDbInstance: Knex,
+) => {
   wss.on("connection", function connection(ws) {
     ws.on("error", console.error);
 
@@ -17,13 +21,13 @@ const registerTextInput = async (wss: WebSocketServer) => {
         doc_id: parseInt(receivedData.doc_id),
         text: receivedData.text,
       });
-      const createdversion = await creatableinstance.createDocVersion();
+      const createdversion =
+        await creatableinstance.createDocVersion(sharedDbInstance);
 
       wss.clients.forEach((client) => {
         if (client.readyState) {
           if (typeof createdversion.text === "string")
             client.send(createdversion.text);
-          // client.send(receivedData.text);
         }
       });
     });

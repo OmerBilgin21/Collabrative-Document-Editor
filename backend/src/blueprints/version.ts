@@ -1,5 +1,6 @@
 // utils
-import { db } from "../schemas/db.js";
+import { Knex } from "knex";
+import db from "../schemas/db.js";
 
 // types
 import {
@@ -21,15 +22,18 @@ export class DocumentVersionCreate {
     this.created_at = new Date();
   }
 
-  async createDocVersion(): Promise<IDocumentVersion> {
-    const latest = await getLatestVersionEntry(this.doc_id.toString());
+  async createDocVersion(sharedDbInstance: Knex): Promise<IDocumentVersion> {
+    const latest = await getLatestVersionEntry(
+      this.doc_id.toString(),
+      sharedDbInstance,
+    );
     if (latest) {
       const directDiff =
         (new Date().getTime() - new Date(latest.created_at).getTime()) /
         (60 * 1000);
       // hourly versioning
       if (directDiff < 60) {
-        const updated = await db
+        const updated = await sharedDbInstance
           .update({ text: this.text })
           .from("doc_versions")
           .returning("*")
@@ -38,7 +42,9 @@ export class DocumentVersionCreate {
       }
     }
 
-    const createdDocVersion: IDocumentVersion[] = await docVersionsTable
+    const createdDocVersion: IDocumentVersion[] = await sharedDbInstance(
+      "doc_versions",
+    )
       .returning("*")
       .insert({
         doc_id: this.doc_id,

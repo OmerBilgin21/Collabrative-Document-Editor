@@ -1,4 +1,4 @@
-import { db } from "../schemas/db.js";
+import db from "../schemas/db.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 

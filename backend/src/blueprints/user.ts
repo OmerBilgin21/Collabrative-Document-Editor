@@ -1,5 +1,5 @@
 // utils
-import { usersTable } from "../schemas/db.js";
+import db from "../schemas/db.js";
 import { hashPassword } from "../utils/security.js";
 
 // types
@@ -21,7 +21,7 @@ export class User {
   }
 
   public static async create(user: IUserCreate): Promise<IUser | undefined> {
-    const existingUser: IUser[] = await usersTable
+    const existingUser: IUser[] = await db("users")
       .select("*")
       .where({ email: user.email });
 
@@ -31,7 +31,7 @@ export class User {
 
     const hashedPassword = await hashPassword(user.password);
 
-    const createdUser: IUser[] = await usersTable.returning("*").insert({
+    const createdUser: IUser[] = await db("users").returning("*").insert({
       name: user.name,
       surname: user.surname,
       email: user.email,
@@ -53,15 +53,15 @@ export class User {
       ? { email: filter?.email }
       : { id: filter?.id };
 
-    return await usersTable.select("*").where(dbFilter).first();
+    return await db("users").select("*").where(dbFilter).first();
   }
 
   async getThisUser(): Promise<IUser> {
-    return await usersTable.select("*").where({ id: this.id }).first();
+    return await db("users").select("*").where({ id: this.id }).first();
   }
 
   async updateUser(user: IUser): Promise<IUser> {
-    const updatedUser: User[] = await usersTable
+    const updatedUser: User[] = await db("users")
       .returning("*")
       .where({ id: this.id })
       .update(user);

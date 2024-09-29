@@ -11,8 +11,8 @@ const db = knex({
     ssl: false,
   },
   pool: {
-    min: 1,
-    max: 10,
+    min: 5,
+    max: 15,
   },
 });
 
@@ -70,9 +70,4 @@ if (!hasDocumentSharesTable) {
     });
 }
 
-const usersTable = db("users");
-const docsTable = db("docs");
-const versTable = db("doc_versions");
-const sharesTable = db("document_shares");
-
-export { db, usersTable, docsTable, versTable, sharesTable };
+export default db;

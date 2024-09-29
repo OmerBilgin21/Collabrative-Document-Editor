@@ -3,6 +3,7 @@ import cors from "cors";
 import { WebSocketServer } from "ws";
 import express, { Express } from "express";
 import cookieParser from "cookie-parser";
+import db from "./schemas/db.js";
 
 // routers
 import routers from "./routers.js";
@@ -18,7 +19,7 @@ const wss = new WebSocketServer({
 
 console.log("wss.address: ", wss.address());
 
-registerTextInput(wss);
+registerTextInput(wss, db);
 
 app.use(
   express.json(),

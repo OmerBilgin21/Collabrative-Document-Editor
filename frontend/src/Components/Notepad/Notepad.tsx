@@ -10,9 +10,6 @@ import { useDoc } from "../../context/DocContext";
 // types
 import VersionList from "../VersionList/VersionList";
 
-// utils
-import { validate } from "uuid";
-
 import "ace-builds/src-noconflict/theme-github";
 import "ace-builds/src-noconflict/ext-searchbox";
 
@@ -49,14 +46,6 @@ const Notepad = ({ ws }: IProps) => {
   }, []);
 
   ws.onmessage = (e) => {
-    // backend is sending a uuid in case of error
-    if (validate(e.data)) {
-      window.alert(
-        "Connection was lost, please reload the page.\nYou might want to secure (copy) your text as well!",
-      );
-      return;
-    }
-
     if (typeof e.data === "string" && e.data !== text) {
       setText(e.data);
     }

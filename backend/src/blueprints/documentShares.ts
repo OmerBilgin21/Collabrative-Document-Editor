@@ -1,5 +1,5 @@
 // utils
-import { db, sharesTable } from "../schemas/db.js";
+import db from "../schemas/db.js";
 
 // types
 import type {
@@ -60,7 +60,7 @@ export class DocumentShare {
   public static async getSharesOfUser(
     id: number,
   ): Promise<IDocumentShares[] | void> {
-    const sharesOfUser: IDBDocumentShares[] = await sharesTable
+    const sharesOfUser: IDBDocumentShares[] = await db("document_shares")
       .select("*")
       .where({ user_id: id });
     return sharesOfUser?.map((share) => this.serialize(share));
@@ -69,7 +69,7 @@ export class DocumentShare {
   public static async getSharesOfDocument(
     id: number,
   ): Promise<void | IDocumentShares[]> {
-    const sharesOfDoc: IDBDocumentShares[] = await sharesTable
+    const sharesOfDoc: IDBDocumentShares[] = await db("document_shares")
       .select("*")
       .where({ id });
     return sharesOfDoc.map((share) => this.serialize(share));

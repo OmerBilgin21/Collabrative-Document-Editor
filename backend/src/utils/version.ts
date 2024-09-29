@@ -1,13 +1,15 @@
 // utils
-import { db } from "../schemas/db.js";
+import { Knex } from "knex";
+import db from "../schemas/db.js";
 
 // types
 import { IDocumentVersion } from "../schemas/version.js";
 
 export const getLatestVersionEntry = async (
   id: string,
+  sharedDbInstance: Knex,
 ): Promise<IDocumentVersion | undefined> => {
-  const foundDoc = await db
+  const foundDoc = await sharedDbInstance
     .select("*")
     .from("docs")
     .where({ id: parseInt(id) })

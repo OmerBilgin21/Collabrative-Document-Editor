@@ -5,7 +5,7 @@ import express, { Request, Response } from "express";
 import { DocumentVersionCreate } from "../blueprints/version.js";
 
 // utils
-import { db } from "../schemas/db.js";
+import db from "../schemas/db.js";
 
 // types
 import { IDocument } from "../schemas/doc.js";
@@ -26,7 +26,7 @@ router.get(
       return res.status(400).json({ error: "Missing query parameter" });
     }
 
-    const latestVersion = await getLatestVersionEntry(id);
+    const latestVersion = await getLatestVersionEntry(id, db);
 
     if (!latestVersion) {
       res.status(404).json({ error: "No version found!" });

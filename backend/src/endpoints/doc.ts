@@ -9,7 +9,7 @@ import type { IDocument } from "../schemas/doc.js";
 import type { IError } from "../utils/errors.js";
 
 // utils
-import { db } from "../schemas/db.js";
+import db from "../schemas/db.js";
 import {
   NotFoundError,
   MissingParamsError,
