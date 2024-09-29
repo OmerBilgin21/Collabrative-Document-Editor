@@ -10,11 +10,11 @@ Below is a draft that I came up with. It includes my goals with the project.
 
 - [x] Real-time collaborative editing.
 - [x] Document versioning and history.
-- [ ] Conflict resolution and merging. (Is this even necessary after real time switch from polling?)
+- [ ] ~~Conflict resolution and merging. (Is this even necessary after real time switch from polling?)~~
 - [ ] User presence and activity indicators.
 - [x] WebSocket-based communication for real-time updates.
 - [x] Document ownership
-- [ ] Encryption for the docs
-- [ ] Better storage for docs (file based probably)
-- [ ] Better UI
-- [ ] Homepage
+- [ ] ~~Encryption for the docs (Won't do because it's too slow that way. I'd have to give up on this app being real-time)~~
+- [x] Better storage for docs (file based probably)
+- [x] Better UI
+- [x] Homepage
