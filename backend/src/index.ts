@@ -19,6 +19,8 @@ const wss = new WebSocketServer({
 
 console.log("wss.address: ", wss.address());
 
+// Single db instance is used (with pooling) for the real-time path,
+// as we're expecting literally hundreds of requests in a minute
 registerTextInput(wss, db);
 
 app.use(
