@@ -23,7 +23,6 @@ const Modal = ({
   children,
 }: IProps) => {
   const actualModalRef = useRef<HTMLDivElement | null>(null);
-  console.log("handleConfirm: ", handleConfirm);
 
   function handleClickOutside(event: MouseEvent) {
     const target = event.target as HTMLFormElement;
