@@ -2,14 +2,14 @@
 import express, { Request, Response } from "express";
 
 // blueprints
-import { CreateDoc, Document } from "../blueprints/doc.js";
+import { CreateDoc } from "../blueprints/doc.js";
 
 // types
 import type { IDocument } from "../schemas/doc.js";
 import type { IError } from "../utils/errors.js";
 
 // utils
-import { db, docsTable } from "../schemas/db.js";
+import { db } from "../schemas/db.js";
 import {
   NotFoundError,
   MissingParamsError,
@@ -38,7 +38,7 @@ router.get(
     const sharesOfUser: IDocumentShares[] | void =
       await DocumentShare.getSharesOfUser(decodedToken.id);
 
-    if (sharesOfUser) {
+    if (sharesOfUser?.length) {
       const sharedDocs: IDocument[] = await db
         .select("*")
         .from<IDocument>("docs")

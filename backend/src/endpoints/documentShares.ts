@@ -26,6 +26,7 @@ router.post(
     }
 
     const foundUser = await User.getUser({ email });
+
     if (!foundUser || !foundUser?.id)
       return res.status(404).json(NotFoundError);
 
