@@ -1,5 +1,8 @@
+// external
+import AceEditor from "react-ace";
+
 // hooks
-import { useEffect, useState, useRef } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 
 // context
 import { useDoc } from "../../context/DocContext";
@@ -10,13 +13,15 @@ import VersionList from "../VersionList/VersionList";
 // utils
 import { validate } from "uuid";
 
+import "ace-builds/src-noconflict/theme-github";
+import "ace-builds/src-noconflict/ext-searchbox";
+
 interface IProps {
   ws: WebSocket;
 }
 
 const Notepad = ({ ws }: IProps) => {
   const [text, setText] = useState<string>("");
-  const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const { versionData: data, selectedDoc } = useDoc();
 
@@ -47,7 +52,7 @@ const Notepad = ({ ws }: IProps) => {
     // backend is sending a uuid in case of error
     if (validate(e.data)) {
       window.alert(
-        "Connection was lost, please reload the page.\nYou might want to secure your text as well!",
+        "Connection was lost, please reload the page.\nYou might want to secure (copy) your text as well!",
       );
       return;
     }
@@ -64,33 +69,35 @@ const Notepad = ({ ws }: IProps) => {
   }
 
   return (
-    <div className="h-full min-w-full ml-0 m:ml-6 lg:ml-10 xl:ml-16 ">
-      <div className="h-full flex w-3/5 shadow-xl">
+    <div className="h-96 lg:min-h-screen w-full ml-0">
+      <div className="h-full flex w-full shadow-xl">
         <div className="w-36 max-h-full">
           <VersionList setText={setText} id={selectedDoc} />
         </div>
-        <div className="w-full min-w-80 h-full">
-          <textarea
-            ref={textAreaRef}
-            className="bg-slate-100 text-black text-left h-full w-full px-4 rounded-r-lg "
-            // on change requires focus change,
-            // onKeyDown is one character behind
-            // therefore onKeyUp is chosen
-            onKeyUp={(e) => {
-              const target = e.target as HTMLTextAreaElement;
-              if (ws.readyState && selectedDoc !== -1) {
-                ws.send(
-                  JSON.stringify({ doc_id: selectedDoc, text: target.value }),
-                );
+        <div className="w-full h-full">
+          <AceEditor
+            mode="text"
+            style={{
+              display: "flex",
+              // had to define these with empty strings to
+              // make them work with tailwind
+              width: "",
+              height: "",
+            }}
+            onChange={(e) => {
+              if (ws.readyState) {
+                ws.send(JSON.stringify({ doc_id: selectedDoc, text: e }));
               }
-              console.log("target: ", target.value);
             }}
             value={text}
+            className="bg-slate-100 text-black text-left h-full w-full  rounded-r-lg"
+            setOptions={{
+              showLineNumbers: false,
+            }}
           />
         </div>
       </div>
     </div>
   );
 };
-
 export default Notepad;
