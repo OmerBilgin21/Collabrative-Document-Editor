@@ -26,7 +26,6 @@ const AuthContextProvider = ({
         const res: IUser = await useAxios("/auth", "get");
         setIsAuthenticated(true);
         setUser(res);
-        console.log("it is set bro we know that");
       } catch (authError) {
         console.error("not authenticated");
       }
