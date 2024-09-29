@@ -18,13 +18,7 @@ const Docs = () => {
   return (
     <div className="flex gap-6 w-full h-32 px-6 pb-6 relative min-w-full">
       {docs?.map((doc: IDoc) => {
-        return (
-          <DocumentIcon
-            docId={doc.id}
-            name={doc.name}
-            sharedUserMails={["qwe@qwe"]}
-          />
-        );
+        return <DocumentIcon docId={doc.id} name={doc.name} />;
       })}
 
       <button
